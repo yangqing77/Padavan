@@ -1,7 +1,7 @@
 #ifndef __RALINK_FLASH_MAP_H__
 #define __RALINK_FLASH_MAP_H__
 
-#define MTD_BOOT_PART_SIZE		0x00030000	/* 192K */
+#define MTD_BOOT_PART_SIZE		0x00020000	/* 192K */
 #define MTD_CONFIG_PART_SIZE		0x00010000	/*  64K */
 #define MTD_FACTORY_PART_SIZE		0x00010000	/*  64K */
 #if defined (CONFIG_MTD_STORE_PART_SIZ) && (CONFIG_MTD_STORE_PART_SIZ >= 0x10000)
@@ -22,7 +22,7 @@
 #define IMAGE1_SIZE			CONFIG_RT2880_MTD_PHYSMAP_LEN
 #endif
 
-#define MTD_KERNEL_PART_OFFSET		(MTD_BOOT_PART_SIZE + MTD_CONFIG_PART_SIZE + MTD_FACTORY_PART_SIZE)
+#define MTD_KERNEL_PART_OFFSET		MTD_BOOT_PART_SIZE
 
 #if defined (CONFIG_RT2880_ROOTFS_IN_FLASH)
 #define MTD_STORE_PART_IDX		5
@@ -39,34 +39,42 @@ static struct mtd_partition rt2880_partitions[] = {
 		size:   MTD_BOOT_PART_SIZE,	/* 192K */
 		offset: 0,
 	}, {
-		name:   "Config",		/* mtdblock1 */
-		size:   MTD_CONFIG_PART_SIZE,	/* 64K */
-		offset: MTDPART_OFS_APPEND,
-	}, {
-		name:   "Factory",		/* mtdblock2 */
-		size:   MTD_FACTORY_PART_SIZE,	/* 64K */
-		offset: MTDPART_OFS_APPEND,
-	}, {
-		name:   "Kernel",		/* mtdblock3 */
+		name:   "Kernel",		/* mtdblock1 */
 		size:   0,			/* calc */
 		offset: MTD_KERNEL_PART_OFFSET,
 #if defined (CONFIG_RT2880_ROOTFS_IN_FLASH)
 	}, {
-		name:   "RootFS",		/* mtdblock4 */
+		name:   "RootFS",		/* mtdblock2 */
 		size:   0,			/* calc */
 		offset: MTDPART_OFS_APPEND,
 #endif
-	}, {
-		name:   "Storage",		/* mtdblock5 */
+	},{
+		name:   "Storage",		/* mtdblock3 */
 		size:   MTD_STORE_PART_SIZE,	/* 64K */
 		offset: MTDPART_OFS_APPEND,
-	}, {
-		name:   "Firmware_Stub",	/* mtdblock6 */
+	},{
+		name:   "Config",		/* mtdblock4 */
+		size:   MTD_CONFIG_PART_SIZE,	/* 64K */
+		offset: MTDPART_OFS_APPEND,
+	},{
+		name:   "Romfile",		/* mtdblock5 */
+		size:   MTD_CONFIG_PART_SIZE,	/* 64K */
+		offset: MTDPART_OFS_APPEND,
+	},{
+		name:   "Rom",		/* mtdblock6 */
+		size:   MTD_CONFIG_PART_SIZE,	/* 64K */
+		offset: MTDPART_OFS_APPEND,
+	},{
+		name:   "Factory",		/* mtdblock7 */
+		size:   MTD_FACTORY_PART_SIZE,	/* 64K */
+		offset: MTDPART_OFS_APPEND,
+	},  {
+		name:   "Firmware_Stub",	/* mtdblock8 */
 		size:   0,			/* calc */
 		offset: MTD_KERNEL_PART_OFFSET,
 	}
-};
-
+};  
+	
 inline void recalc_partitions(uint64_t flash_size, uint32_t kernel_size)
 {
 	/* first, calc "Storage" size (use 256K for >= 16MB flash) */
